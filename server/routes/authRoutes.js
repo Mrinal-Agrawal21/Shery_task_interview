@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const User = require('../models/User');
 const { protect } = require('../middleware/authMiddleware');
+const sendEmail = require('../utils/sendEmail');
 
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET || 'secret123', {
@@ -34,14 +35,28 @@ router.post('/register', async (req, res) => {
         });
 
         if (user) {
-            console.log('----------------------------------------------------');
-            console.log(`NEW USER REGISTERED: ${user.email}`);
-            console.log(`VERIFICATION LINK: http://localhost:5173/verify-email?token=${verificationToken}`);
-            console.log('----------------------------------------------------');
+            const verificationUrl = `http://localhost:5173/verify-email?token=${verificationToken}`;
+            const message = `
+                <h1>You have requested to register an account</h1>
+                <p>Please go to this link to verify your email:</p>
+                <a href=${verificationUrl} clicktracking=off>${verificationUrl}</a>
+            `;
 
-            res.status(201).json({
-                message: 'Registration successful. A verification link has been printed to the server console.'
-            });
+            try {
+                await sendEmail({
+                    to: user.email,
+                    subject: 'Email Verification',
+                    html: message
+                });
+
+                res.status(201).json({
+                    message: 'Registration successful. A verification link has been sent to your email.'
+                });
+            } catch (error) {
+                console.error(error);
+                await User.findByIdAndDelete(user._id);
+                res.status(500).json({ message: 'Email could not be sent' });
+            }
         } else {
             res.status(400).json({ message: 'Invalid user data' });
         }
@@ -88,7 +103,7 @@ router.post('/login', async (req, res) => {
 
         if (user && (await user.matchPassword(password))) {
             if (!user.isVerified) {
-                return res.status(401).json({ message: 'Please verify your email first. Check the server console for the link.' });
+                return res.status(401).json({ message: 'Please verify your email first. Check your email inbox for the verification link.' });
             }
 
             res.json({

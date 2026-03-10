@@ -70,3 +70,7 @@ A complete MERN (MongoDB, Express, React, Node.js) stack project demonstrating a
 2.  **Verify:** The user clicks the link (e.g., `http://localhost:5173/verify-email?token=...`) which automatically calls the `/verify-email` endpoint.
 3.  **Login:** The user logs in at `/login`. A JWT token is stored in `localStorage`.
 4.  **Profile:** The user is redirected to the `/profile` page, managed securely by TanStack Query and an Axios Request Interceptor. If the user logs out, the token is cleared, and access is revoked.
+
+## Screenshots
+
+![User Profile Final Result](./screenshots/profile_result.png)

@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axiosInstance from '../api/axiosInstance';
+import Navbar from '../components/Navbar';
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -33,18 +34,24 @@ const Profile = () => {
     }
 
     return (
-        <div className="flex justify-center items-center h-screen bg-gray-100">
-            <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md text-center">
-                <h2 className="text-3xl font-bold mb-4">User Profile</h2>
-                <div className="mb-6 space-y-2 text-left bg-gray-50 p-4 rounded-md border border-gray-200">
-                    <p><span className="font-semibold text-gray-700">Name:</span> {profileData?.name}</p>
-                    <p><span className="font-semibold text-gray-700">Email:</span> {profileData?.email}</p>
-                    <p><span className="font-semibold text-gray-700">User ID:</span> {profileData?.id}</p>
+        <div className="min-h-screen bg-gray-100 flex flex-col relative">
+            <Navbar user={profileData} />
+
+            <main className="flex-grow flex justify-center items-center">
+                <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md text-center mx-4">
+                    <h2 className="text-3xl font-bold mb-4">Welcome back!</h2>
+                    <p className="text-gray-600 mb-6 shrink-0">
+                        You have successfully logged in to your account.
+                    </p>
+                    
                 </div>
-                <button onClick={handleLogout} className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition duration-200">
-                    Logout
-                </button>
-            </div>
+            </main>
+
+            <footer className="w-full py-4 text-center">
+                <p className="text-xs text-gray-400 opacity-70 tracking-widest font-mono">
+                    ID: {profileData?.id}
+                </p>
+            </footer>
         </div>
     );
 };

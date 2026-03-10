@@ -9,9 +9,8 @@ const Register = () => {
 
     const registerMutation = useMutation({
         mutationFn: (newUserData) => axiosInstance.post('/register', newUserData),
-        onSuccess: (data) => {
-            alert(data.data.message || 'Registration successful. Check console for verification link.');
-            navigate('/verify-email');
+        onSuccess: () => {
+            // Do not redirect or alert, we will just show a success UI instead
         },
         onError: (error) => {
             alert(error.response?.data?.message || 'Registration failed');
@@ -24,6 +23,26 @@ const Register = () => {
         e.preventDefault();
         registerMutation.mutate(formData);
     };
+
+    if (registerMutation.isSuccess) {
+        return (
+            <div className="flex justify-center items-center h-screen bg-gray-100">
+                <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md text-center">
+                    <div className="mb-4 text-green-500">
+                        <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                    </div>
+                    <h2 className="text-2xl font-bold mb-4">Check Your Email</h2>
+                    <p className="text-gray-700 mb-6">
+                        We've sent a verification link to <strong>{formData.email}</strong>.
+                        Please check your inbox to verify your account.
+                    </p>
+                    <Link to="/login" className="inline-block w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
+                        Go to Login
+                    </Link>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex justify-center items-center h-screen bg-gray-100">
